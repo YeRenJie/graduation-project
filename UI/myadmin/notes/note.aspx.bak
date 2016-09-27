@@ -1,0 +1,261 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/myadmin/site/layout.Master" AutoEventWireup="true" CodeBehind="note.aspx.cs" Inherits="UI.myadmin.notes.note" EnableViewState="false" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+    <script type="text/javascript" src="/myadmin/DatePicker/WdatePicker.js"></script>
+    <script src="/myadmin/scripts/jquery.form.js"></script>
+    <script type="text/javascript">
+        var msgBox = null;
+        $(function () {
+            msgBox = new MsgBox({ imghref: "/myadmin/images/" });
+            var regex = new RegExp("^(?:(?:([0-9]{4}(-|\/)(?:(?:0?[1,3-9]|1[0-2])(-|\/)(?:29|30)|((?:0?[13578]|1[02])(-|\/)31)))|([0-9]{4}(-|\/)(?:0?[1-9]|1[0-2])(-|\/)(?:0?[1-9]|1\\d|2[0-8]))|(((?:(\\d\\d(?:0[48]|[2468][048]|[13579][26]))|(?:0[48]00|[2468][048]00|[13579][26]00))(-|\/)0?2(-|\/)29))))$"); //日期
+
+            $("#notesList").find("tr").hover(function () {
+                $(this).toggleClass("trClass");
+            });
+
+            //双击事件
+            $("#notesList").find("tr").dblclick(function () {
+                if ($(this).attr("class") == "trClass") {
+                    msgBox.showMsgInfo("信息已添加修改框");
+                    $(this).css({ "background": "#35AADB", "color": "#fff" }).siblings("tr").css({ "background": "#fff", "color": "#444" })
+                    var gid = $(this).children("td").eq(0).text();
+                    var gbuytime = $(this).children("td").eq(1).text();
+                    var gname = $(this).children("td").eq(2).text();
+                    var gcount = $(this).children("td").eq(3).text();
+                    var gprice = $(this).children("td").eq(4).text();
+                    var gplace = $(this).children("td").eq(5).text();
+                    var gbuyuser = $(this).children("td").eq(6).text();
+                    var gbuyway = $(this).children("td").eq(7).text();
+                    var gdes = $(this).children("td").eq(8).text();
+
+                    $("#gBuyTime").val(gbuytime);
+                    $("#gName").val(gname);
+                    $("#gCount").val(gcount);
+                    $("#gPrice").val(gprice);
+                    $("#gPlace").val(gplace);
+                    $("#gBuyUser").val(gbuyuser);
+                    $("#gBuyWay").val(gbuyway);
+                    $("#gDes").val(gdes);
+                    $("#addNote label").html("<input type='hidden' name='uisd' value='" + gid + "' />");
+                    $("#delNote,#reload").show();
+                    $("#addNote").find("a").attr("title", "修改").html("修改");
+                }
+            })
+
+            $("#delNote").click(function () {
+                if (confirm("您确定要删除吗？此操作将不可恢复")) {
+                    $.ajax({
+                        url: "/myadmin/notes/del.ashx",
+                        type: "post",
+                        data: { "usid": $("input[name='uisd']").val() },
+                        timeout: 15000,
+                        dataType: "html",
+                        beforeSend: function (xhr) {
+                            msgBox.showMsgWait("删除中，请稍后");
+                        },
+                        success: function (data) {
+                            if (data == "busy") {
+                                msgBox.showMsgErr("系统繁忙,请稍后再试");
+                            }
+                            else if (data == "ok") {
+                                msgBox.showMsgOk("删除成功。", function () {
+                                    //window.location.reload();
+                                    window.location = "/myadmin/notes/note.aspx";
+                                });
+                            }
+                        },
+                        error: function (xhr, txtStatus, errMsg) {
+                            alert(errMsg);
+                        },
+                        complete: function (xhr) {
+
+                        }
+                    });
+                }
+            })
+
+            //搜索
+            $("#search a").click(function () {
+                var kw = $("#kw").val();
+                window.location = "/myadmin/notes/note.aspx?kw=" + kw;
+            })
+
+            //搜索
+            $("#searchjs a").click(function () {
+                var kw = $("#kw").val();
+                window.location = "/myadmin/notes/note.aspx?ts=" + $("#gBegain").val() + "|" + $("#gEnd").val();
+            })
+
+            //验证
+            $("#addNote a").click(function () {
+                var htmls = $("#addNote a").html();
+                if ($("#gBuyTime").val() == "") {
+                    msgBox.showMsgInfoSide("gBuyTime", "请选择您购买的日期", 800);
+                    $("#gBuyTime").focus();
+                    return;
+                }
+                else if (!regex.test($("#gBuyTime").val())) {
+                    msgBox.showMsgInfoSide("gBuyTime", "日期格式不正确。", 800);
+                    $("#gBuyTime").focus();
+                    return;
+                }
+                else if ($("#gName").val() == "") {
+                    msgBox.showMsgInfoSide("gName", "商品名称不能为空。", 800);
+                    $("#gName").focus();
+                    return;
+                }
+                else if ($("#gCount").val() == "") {
+                    msgBox.showMsgInfoSide("gCount", "数量不能为空。", 800);
+                    $("#gCount").focus();
+                    return;
+                }
+                else if (!($("#gCount").val().match(/^(\+|-)?\d+$/) && $("#gCount").val() > 0)) {
+                    msgBox.showMsgInfoSide("gCount", "数量为大于0的正整数。", 800);
+                    $("#gCount").focus();
+                    return;
+                }
+                else if ($("#gPrice").val() == "") {
+                    msgBox.showMsgInfoSide("gPrice", "商品单价不能为空。", 800);
+                    $("#gPrice").focus();
+                    return;
+                }
+                else if (!$("#gPrice").val().match(/^(([1-9]\d*)|\d)(\.\d{1,2})?$/)) {
+                    msgBox.showMsgInfoSide("gPrice", "商品单价格式不正确", 800);
+                    $("#gPrice").focus();
+                    return;
+                }
+                else if ($("#gPlace").val() == "") {
+                    msgBox.showMsgInfoSide("gPlace", "购买地点不能为空。", 800);
+                    $("#gPlace").focus();
+                    return;
+                }
+                else if ($("#gBuyUser").val() == "") {
+                    msgBox.showMsgInfoSide("gBuyUser", "购买人不能为空。", 800);
+                    $("#gBuyUser").focus();
+                    return;
+                }
+                else if ($("#gBuyWay").val() == "请选择") {
+                    msgBox.showMsgInfoSide("gBuyWay", "请选择支付方式。", 800);
+                    $("#gBuyWay").focus();
+                    return;
+                }
+                else if ($("#gDes").val().length > 100) {
+                    msgBox.showMsgInfoSide("gDes", "备注应在100个字符以内。", 800);
+                    $("#gDes").focus();
+                    return;
+                }
+                else {
+                    $("#myForm").ajaxSubmit({
+                        url: "/myadmin/notes/note.aspx?type=" + htmls,
+                        type: "post",
+                        beforeSubmit: function () {
+                            msgBox.showMsgWait(htmls + "中，请稍后");
+                        },
+                        dataType: "html",
+                        data: $("#myForm").serialize(),
+                        success: function (data) {
+                            if (data == "busy") {
+                                msgBox.showMsgErr("系统繁忙,请稍后再试");
+                            }
+                            else if (data == "ok") {
+                                msgBox.showMsgOk(htmls + "成功。", function () {
+                                    if (htmls == "新增") {
+                                        window.location = "/myadmin/notes/note.aspx";
+                                    }
+                                    else {
+                                        window.location.reload();
+                                    }
+                                });
+                            }
+                        },
+                        error: function (xhr, txtStatus, errMsg) {
+                            alert(errMsg);
+                        }
+                    });
+                }
+            });
+        })
+    </script>
+</asp:Content>
+<asp:Content ID="Content4" ContentPlaceHolderID="cpNav" runat="server">
+    <li><a href="/myadmin/site/default.aspx"><i class="ico-home"></i>首页</a></li>
+    <li><a href="/myadmin/user/userInfo.aspx"><i class=""></i>用户资料</a></li>
+    <li class="ind"><a href="/myadmin/notes/note.aspx"><i class=""></i>消费记录</a></li>
+    <li><a href="/myadmin/notes/cost.aspx"><i class=""></i>收支管理</a></li>
+    <li><a href="/myadmin/feedback/feedback.aspx"><i class=""></i>留言板</a></li>
+    <li><a href="/myadmin/webInfo/about.aspx"><i class=""></i>关于我</a></li>
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="cpPosition" runat="server">
+    首页&gt;消费记录
+</asp:Content>
+<asp:Content ID="Content3" ContentPlaceHolderID="cpMain" runat="server">
+    <div class="noteAdd">
+        <p>在这里，您可以增加消费记录，查看消费详情，还可以根据关键词查询记录。</p>
+        <p>
+            <span><b>搜索关键字：</b> </span>
+            <input type="text" id="kw" name="kw" />&nbsp; <span id="search"><a title="搜索">搜索</a></span>&nbsp;&nbsp;&nbsp;<span style="color: #999">注:可以根据消费名称，消费地址，消费方式查询</span>
+        </p>
+        <p>
+            <span><b>时间段查询：</b>从
+                <input class="Wdate js" type="text" onclick="WdatePicker()" name="gBegain" id="gBegain" style="width: 90px; padding: 0 2px; border: 1px solid #d9d9d9;" value="<%=firstDate.ToString("yyyy-MM-dd") %>" />
+                到
+                <input class="Wdate js" type="text" onclick="WdatePicker()" name="gEnd" id="gEnd" style="width: 90px; padding: 0 2px; border: 1px solid #d9d9d9;" value="<%=DateTime.Now.ToString("yyyy-MM-dd") %>" /></span>&nbsp;
+            <span id="searchjs"><a title="搜索">搜索</a></span>&nbsp;&nbsp;&nbsp;<span style="color: #999">注:可以根据某一时间段查询消费记录</span>
+        </p>
+        <table id="adsn">
+            <tr>
+                <td><b>消费时间：</b><input class="Wdate gsd" type="text" onclick="WdatePicker()" name="gBuyTime" id="gBuyTime" style="width: 90px; padding: 0 2px;" value="<%=DateTime.Now.ToString("yyyy-MM-dd") %>" /></td>
+                <td><b>消费名称：</b><input type="text" name="gName" id="gName" class="gsd" /></td>
+                <td><b>数量：</b><input type="text" name="gCount" id="gCount" class="gsd" style="width: 30px" value="1" /></td>
+                <td><b>单价/总计：</b><input type="text" name="gPrice" id="gPrice" class="gsd" style="width: 70px" /></td>
+                <td><b>消费地点：</b><input type="text" name="gPlace" id="gPlace" class="gsd" /></td>
+                <td><b>消费人：</b><input type="text" name="gBuyUser" id="gBuyUser" class="gsd" style="width: 80px" value="<%=usname %>" /></td>
+                <td><b>支付方式：</b><select name="gBuyWay" id="gBuyWay"><option value="请选择">请选择</option>
+                    <option value="现金">现金</option>
+                    <option value="刷卡">刷卡</option>
+                    <option value="网上支付">网上支付</option>
+                </select></td>
+                <td><b>商品备注：</b><input type="text" name="gDes" id="gDes" class="gsd" style="width: 100px;" value="无" /></td>
+                <td style="white-space: nowrap;"><b>操作：</b><br />
+                    <span id="addNote"><a title="新增">新增</a><label></label></span><span id="delNote"><a title="删除">删除</a></span><span id="reload"><a title="取消" onclick="window.location = '\/myadmin\/notes\/note.aspx'">取消</a></span></td>
+            </tr>
+        </table>
+        <div class="noteShow">
+        </div>
+    </div>
+    <div class="noteList">
+        <table id="notesList">
+            <asp:Repeater ID="rp" runat="server">
+                <HeaderTemplate>
+                    <tr class="tb">
+                        <th style="width: 30px">编号</th>
+                        <th style="width: 100px;">消费时间</th>
+                        <th style="width: 20%">消费名称</th>
+                        <th style="width: 30px">数量</th>
+                        <th style="width: 70px">单价/总计</th>
+                        <th style="width: 140px;">地点</th>
+                        <th style="width: 80px">消费人</th>
+                        <th style="width: 80px;">支付方式</th>
+                        <th style="width: 160px;">备注</th>
+                        <th style="width: 85px">支出 ≈<b style="color: #f00"><%=countPay %></b></th>
+                    </tr>
+                </HeaderTemplate>
+                <ItemTemplate>
+                    <tr>
+                        <td><%#Eval("gID") %></td>
+                        <td><%#Eval("gBuyTime","{0:yyyy-MM-dd}") %></td>
+                        <td><%#Eval("gName") %></td>
+                        <td><%#Eval("gCount") %></td>
+                        <td><%#Eval("gPrice") %></td>
+                        <td><%#Eval("gBuyPlace") %></td>
+                        <td><%#GetUser(Eval("gBuyUser").ToString()).UNick %></td>
+                        <td><%#Eval("gPayWay") %></td>
+                        <td><%#Eval("gDes") %></td>
+                        <td>-<%#Total(int.Parse(Eval("gCount").ToString()),decimal.Parse(Eval("gPrice").ToString())) %> 元</td>
+                    </tr>
+                </ItemTemplate>
+            </asp:Repeater>
+        </table>
+        <div class="fPage"><span>当前导航页 <b><%=cp %></b> / <b><%=pageCount %></b>，共 <b><%=totalSize %></b> 条记录 </span>&nbsp;&nbsp;&nbsp;&nbsp;<a href="?page=1" title="首页">首页</a><a href="<%=prevHtml %>" title="上一页">上一页</a><a href="<%=nextHtml %>" title="下一页">下一页</a><a href="<%="?page="+pageCount %>" title="尾页">尾页</a></div>
+    </div>
+</asp:Content>

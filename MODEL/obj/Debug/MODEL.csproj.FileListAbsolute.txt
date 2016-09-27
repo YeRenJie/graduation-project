@@ -1,0 +1,10 @@
+E:\用户\毕业设计\新生帝收支管理系统源码V1.1\MODEL\bin\Debug\MODEL.dll
+E:\用户\毕业设计\新生帝收支管理系统源码V1.1\MODEL\bin\Debug\MODEL.pdb
+E:\用户\毕业设计\新生帝收支管理系统源码V1.1\MODEL\obj\Debug\MODEL.dll
+E:\用户\毕业设计\新生帝收支管理系统源码V1.1\MODEL\obj\Debug\MODEL.pdb
+E:\用户\毕业设计\新生帝收支管理系统源码V1.1\MODEL\obj\Debug\MODEL.csprojResolveAssemblyReference.cache
+E:\用户\毕业设计\收支管理系统\MODEL\bin\Debug\MODEL.dll
+E:\用户\毕业设计\收支管理系统\MODEL\bin\Debug\MODEL.pdb
+E:\用户\毕业设计\收支管理系统\MODEL\obj\Debug\MODEL.dll
+E:\用户\毕业设计\收支管理系统\MODEL\obj\Debug\MODEL.pdb
+E:\用户\毕业设计\收支管理系统\MODEL\obj\Debug\MODEL.csprojResolveAssemblyReference.cache

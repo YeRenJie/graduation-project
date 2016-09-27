@@ -1,0 +1,14 @@
+E:\用户\毕业设计\新生帝收支管理系统源码V1.1\DAL\bin\Debug\DAL.dll
+E:\用户\毕业设计\新生帝收支管理系统源码V1.1\DAL\bin\Debug\DAL.pdb
+E:\用户\毕业设计\新生帝收支管理系统源码V1.1\DAL\bin\Debug\MODEL.dll
+E:\用户\毕业设计\新生帝收支管理系统源码V1.1\DAL\bin\Debug\MODEL.pdb
+E:\用户\毕业设计\新生帝收支管理系统源码V1.1\DAL\obj\Debug\DAL.csprojResolveAssemblyReference.cache
+E:\用户\毕业设计\新生帝收支管理系统源码V1.1\DAL\obj\Debug\DAL.dll
+E:\用户\毕业设计\新生帝收支管理系统源码V1.1\DAL\obj\Debug\DAL.pdb
+E:\用户\毕业设计\收支管理系统\DAL\bin\Debug\DAL.dll
+E:\用户\毕业设计\收支管理系统\DAL\bin\Debug\DAL.pdb
+E:\用户\毕业设计\收支管理系统\DAL\bin\Debug\MODEL.dll
+E:\用户\毕业设计\收支管理系统\DAL\bin\Debug\MODEL.pdb
+E:\用户\毕业设计\收支管理系统\DAL\obj\Debug\DAL.csprojResolveAssemblyReference.cache
+E:\用户\毕业设计\收支管理系统\DAL\obj\Debug\DAL.dll
+E:\用户\毕业设计\收支管理系统\DAL\obj\Debug\DAL.pdb

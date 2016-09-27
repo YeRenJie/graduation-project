@@ -1,0 +1,121 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="layout.master.cs" Inherits="UI.myadmin.site.layout" %>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=8" />
+    <title>YeMoney</title>
+    <link rel="stylesheet" type="text/css" href="/myadmin/css/reset.css" />
+    <link rel="stylesheet" type="text/css" href="/myadmin/css/common.css" />
+    <script type="text/javascript" src="/myadmin/scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="/myadmin/scripts/common.js"></script>
+    <script type="text/javascript" src="/myadmin/scripts/msgBox.js"></script>
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+    <!--[if IE 6]>
+    <script type="text/javascript" src="/myadmin/scripts/IE6PNG.js"></script>
+    <script type="text/javascript">
+    DD_belatedPNG.fix('div, img, background');
+    </script>
+    <![endif]-->
+</head>
+<body>
+    <div class="Wrapper">
+        <div id="left">
+            <div id="logo">
+                <a href="/myadmin/site/default.aspx" target="_parent">
+                    <img src="/myadmin/images/logo.png" alt="SysYeMoney" title="SysYeMoney" /></a>
+            </div>
+            <div id="navbar">
+                <ul>
+                    <asp:ContentPlaceHolder ID="cpNav" runat="server">
+                    </asp:ContentPlaceHolder>
+                </ul>
+            </div>
+        </div>
+        <div id="right">
+            <div id="rTop">
+                <span id="exit"><a title="注 销">注 销</a></span>
+                <a href="/myadmin/user/userinfo.aspx" title="查看资料" id="pic">
+                    <img src="/upload/user/<%=model.UPic %>" alt="" title="" id="userPic" width="30" height="30" />
+                </a><span id="nick">你好，<%=model.UNick %>。</span>
+                <a href="/myadmin/site/login.aspx" title="更改用户" class="lo">
+                    <img src="../images/74_22_login.png" alt="" title="" /></a>
+                <a href="/myadmin/site/reg.aspx" title="注册" class="lo"><img src="../images/71_22_reg.png" alt="" title="" /></a>
+            </div>
+            <form id="myForm" runat="server" enctype="multipart/form-data">
+                <div id="rMain">
+                    <div class="position">
+                        <asp:ContentPlaceHolder ID="cpPosition" runat="server">
+                        </asp:ContentPlaceHolder>
+                    </div>
+                    <div class="container clear">
+                        <asp:ContentPlaceHolder ID="cpMain" runat="server">
+                        </asp:ContentPlaceHolder>
+                    </div>
+                    <!--Begin：设置右边的高度-->
+                    <script type="text/javascript">
+                        doResize();
+                        $(window).resize(function () { doResize(); });
+                        function doResize() { $("#right").css({ "width": ($(window).width() - 177) + "px" }); }
+                    </script>
+                    <!--End-->
+                </div>
+            </form>
+            <div id="rFooter">
+                <span style="color: rgb(153, 153, 153); font-family: Arial; font-size: 12px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 20px; orphans: auto; text-align: center; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); display: inline !important; float: none;">Copyright © 2015<span class="Apple-converted-space">&nbsp;</span></span>YeMoney<span style="color: rgb(153, 153, 153); font-family: Arial; font-size: 12px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: 20px; orphans: auto; text-align: center; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); display: inline !important; float: none;"><span class="Apple-converted-space">&nbsp;</span>All Rights Reserved</span></div>
+        </div>
+    </div>
+    <div class="show">
+        <div class="showTitle">
+            消息提示框
+        </div>
+        <div class="msgs">
+            <span>您确定要退出吗？</span>
+            <a id="ex">确定</a><a id="ca">取消</a>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(function () {
+            $("#exit a").click(function () {
+                $(".show").fadeIn(200);
+            })
+            $("#ca").click(function () {
+                $(".show").fadeOut(200);
+            })
+            $("#ex").click(function () {
+                $.ajax({
+                    url: "/myadmin/check/exit.ashx",
+                    data: null,
+                    dataType: "html",
+                    type: "get",
+                    success: function (data) {
+                        if (data == "exit") {
+                            window.location = "/myadmin/site/login.aspx";
+                        }
+                    }
+                });
+            })
+            $(".show").mousedown(function (e)//e鼠标事件  
+            {
+                $(this).css("cursor", "move");//改变鼠标指针的形状  
+                var offset = $(this).offset();//DIV在页面的位置  
+                var x = e.pageX - offset.left;//获得鼠标指针离DIV元素左边界的距离  
+                var y = e.pageY - offset.top;//获得鼠标指针离DIV元素上边界的距离  
+                $(document).bind("mousemove", function (ev)//绑定鼠标的移动事件，因为光标在DIV元素外面也要有效果，所以要用doucment的事件，而不用DIV元素的事件  
+                {
+                    $(".show").stop();//加上这个之后  
+                    var _x = ev.pageX - x;//获得X轴方向移动的值  
+                    var _y = ev.pageY - y;//获得Y轴方向移动的值  
+                    $(".show").animate({ left: _x + "px", top: _y + "px" }, 0);
+                });
+            });
+            $(document).mouseup(function () {
+                $(".show").css("cursor", "default");
+                $(this).unbind("mousemove");
+            })
+        })
+    </script>
+</body>
+</html>
